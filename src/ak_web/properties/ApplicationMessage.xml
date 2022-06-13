@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="euc-kr"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd"> 
+<properties> 
+<comment>20081024 최초작성</comment> 
+<entry key="test.value.0">안녕하세요. </entry> 
+<entry key="test.value.1">첫번째{1} 테스트 입니다.. 두번째값  {2} 테스트 </entry> 
+<entry key="test.value.2">첫번째{1} 테스트 입니다.. </entry> 
+<entry key="test.value.3">첫번째{1} 테스트 입니다.. 두번째값  {2} 테스트 </entry> 
+<entry key="test.value.4">첫번째{1} 테스트 입니다.. 두번째값  {2} 테스트 세번째값  {3} 테스트 </entry> 
+<entry key="common.search.01">조회된 대상이 없습니다.</entry> 
+<entry key="common.search.02">{1}건이 조회되었습니다.</entry>
+<entry key="common.save.01">등록되었습니다.</entry>
+<entry key="common.save.02">등록이 취소되었습니다.</entry>
+<entry key="common.save.03">등록중에 오류가 발생했습니다.</entry>
+<entry key="common.save.04">등록중에 파일이 제한된 용량을 초과하였습니다.</entry>
+<entry key="common.input.01">선택된 대상이 없습니다.</entry>
+<entry key="common.input.02">시작일을 입력하십시오.</entry>
+<entry key="common.input.03">종료일을 입력하십시오.</entry>
+<entry key="common.input.04">시작시간이 종료시간보다 큽니다.</entry>
+<entry key="common.input.05">시작시간과 종료시간이 같을 수 없습니다.</entry>
+<entry key="common.input.06">시작일이 종료일보다 늦습니다.</entry>
+<entry key="common.input.07">일부 특수문자의 사용을 제한합니다.</entry>
+<entry key="common.input.08">최대 입력 범위를 초과하였습니다.</entry>
+<entry key="common.input.09">{1}을(를) 선택하십시오</entry>
+<entry key="common.input.10">{1}을(를) 입력하십시오</entry>
+<entry key="common.modify.01">수정되었습니다.</entry>
+<entry key="common.modify.02">수정이 취소되었습니다.</entry>
+<entry key="common.modify.03">수정시 오류가 발생했습니다.</entry>
+<entry key="common.modify.04">수정중에 파일이 제한된 용량을 초과하였습니다.</entry>
+<entry key="common.delete.01">삭제하시겠습니까?</entry>
+<entry key="common.delete.02">삭제되었습니다.</entry>
+<entry key="common.delete.03">삭제시 오류가 발생했습니다.</entry>
+<entry key="common.delete.04">삭제 대상이 없습니다.</entry>
+<entry key="common.security.01">로그인 하십시오.</entry>
+<entry key="common.security.02">본인에게 수정할 수 있는 권한이 없습니다.\\n\\n계속하시겠습니까?</entry>
+<entry key="common.security.03">서버와의 연결이 끊겼습니다. \\n다시 로그인하십시오.</entry>
+<entry key="common.security.04">페이지를 볼 수 있는 권한이 없습니다.</entry>
+<entry key="common.etc.01">Download에 이상이 있습니다.</entry>
+<entry key="common.etc.02">파일 처리중입니다.</entry>
+<entry key="common.etc.03">오류가 발생했습니다.</entry>
+<entry key="common.overlapping.01">{1} 중복되었습니다.</entry>
+<entry key="common.recommend.01">추천되었습니다</entry>
+<entry key="common.recommend.02">이미 추천하였습니다</entry>
+<entry key="common.custom.01">{1}</entry>
+<entry key="common.login.01">로그인 되셨습니다. Id : {1} , PW : {2}</entry>
+<entry key="common.login.02">회원정보가 일치하지 않습니다.</entry>
+<entry key="common.login.03">유효한 관리자가 아닙니다.</entry>
+<entry key="common.logout.01">로그아웃 되었습니다.</entry>
+<entry key="common.eventmaster.01">응모되었습니다.</entry>
+<entry key="common.eventmaster.02">애플포인트가 부족합니다.</entry>
+<entry key="common.eventmaster.03">로그인을 해주세요.</entry>
+<entry key="common.receipt.01">영수증이 정상적으로 등록되었습니다.</entry>
+<entry key="common.receipt.02">올바른 영수증 번호가 아닙니다.</entry>
+<entry key="common.idpass.01">올바른 인증번호가 아닙니다.</entry>
+<entry key="common.member.01">이미 등록된 고객입니다.</entry>
+<entry key="common.member.02">재가입 정책에 의한 가입 불가 사용자입니다.</entry>
+<entry key="common.member.03">계정중복으로 사용할 수 없는 계정입니다.</entry>
+<entry key="common.entry.01">투표하였습니다.</entry>
+<entry key="common.entry.02">이미 투표하였습니다.</entry>
+<entry key="common.auth.01">정상적인 경로로 접근하여 주십시오.</entry>
+</properties> 
+ 

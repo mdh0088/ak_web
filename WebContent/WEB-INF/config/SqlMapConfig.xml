@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<mappers>
+		<mapper resource="ak_web/resource/web/academyMapper.xml" />
+		<mapper resource="ak_web/resource/web/courseMapper.xml" />
+		<mapper resource="ak_web/resource/web/csMapper.xml" />
+		<mapper resource="ak_web/resource/web/mainMapper.xml" />
+		<mapper resource="ak_web/resource/web/userMapper.xml" />
+		<mapper resource="ak_web/resource/web/commonMapper.xml" />
+		<mapper resource="ak_web/resource/mobile/moacademyMapper.xml" />
+	</mappers>
+</configuration> 

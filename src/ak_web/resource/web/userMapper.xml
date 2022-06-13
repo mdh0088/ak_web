@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="/web/userMapper">
+	<select id="loginCheck" parameterType="hashmap" resultType="hashmap">
+	<!-- 유미회원 테스트용 -->
+		select
+		(select short_name from bacodetb where CODE_FG = '02' and sub_code = bacusttb.store) as store_nm, bacusttb.*, ams_cus.*, ams_card.* from bacusttb, ams_cus, ams_card
+		where ams_cus.ci = '/gUnbdP2rwZWy57ZTRx2Rz+ZuUpb2Lp+0aZ18dq3YOaxr8xlOOl0+m9lw4gBlOzk6iOZM1Xb48sK7ouMQcjm1Q==' 
+        and ams_cus.ci = bacusttb.ci(+)
+        and ams_card.ci = ams_cus.ci
+        and bacusttb.store = 
+        (
+            SELECT                                                        
+            NVL(MAX(STORE),'00') DSTORE                                   
+            FROM BAFASTRTB WHERE HQ='00' AND CI=bacusttb.ci  AND DELETE_FG='0' 
+        )
+        AND ams_card.CARD_KND_DIV_CD IN ('1','2','8')
+        AND ams_card.HI_UPR_BL IS NULL
+        AND ams_card.VL_PERI >= TO_CHAR(SYSDATE,'YYYYMM')
+        AND ROWNUM<![CDATA[<]]>2   
+        
+        <!-- 멤버스만있는회원 테스트용 -->
+<!-- 		select -->
+<!-- 		(select short_name from bacodetb where CODE_FG = '02' and sub_code = bacusttb.store) as store_nm, bacusttb.*, ams_cus.*, ams_card.* from bacusttb, ams_cus, ams_card -->
+<!-- 		where ams_cus.ci = 'q3PJKV5Ot5i3qtjV1qThGRK0PWIuLyCbCF0bHKgB13KdUpH/QUAWvjmn75kIrhtiw3a6+feHBGe8NBK2kdvIPg==' 멤버스만있는 회원 -->
+<!--         and ams_cus.ci = bacusttb.ci(+) -->
+<!--         and ams_card.ci = ams_cus.ci -->
+<!--         AND ams_card.CARD_KND_DIV_CD IN ('1','2','8') -->
+<!--         AND ams_card.HI_UPR_BL IS NULL -->
+<!--         AND ams_card.VL_PERI >= TO_CHAR(SYSDATE,'YYYYMM') -->
+<!--         AND ROWNUM<![CDATA[<]]>2    -->
+        
+        <!-- 유미 원본 백업 -->
+<!-- 		select -->
+<!-- 		(select short_name from bacodetb where CODE_FG = '02' and sub_code = bacusttb.store) as store_nm, bacusttb.*, ams_cus.*, ams_card.* from bacusttb, ams_cus, ams_card -->
+<!-- 		where ams_cus.ptl_id = 'mi0889' and ams_cus.ptl_pw = '1ea7eb5f71415a1cb97e5a44cdcc677b' --> 
+<!--         and ams_cus.ci = bacusttb.ci(+) -->
+<!--         and ams_card.ci = ams_cus.ci -->
+<!--         and bacusttb.store =  -->
+<!--         ( -->
+<!--             SELECT                                                         -->
+<!--             NVL(MAX(STORE),'00') DSTORE                                    -->
+<!--             FROM BAFASTRTB WHERE HQ='00' AND CI=bacusttb.ci  AND DELETE_FG='0'  -->
+<!--         ) -->
+<!--         AND ams_card.CARD_KND_DIV_CD IN ('1','2','8') -->
+<!--         AND ams_card.HI_UPR_BL IS NULL -->
+<!--         AND ams_card.VL_PERI >= TO_CHAR(SYSDATE,'YYYYMM') -->
+<!--         AND ROWNUM<![CDATA[<]]>2    -->
+	</select>
+	<select id="retrievePeriod" parameterType="string" resultType="string">
+
+		select period from (select period from baperitb where web_open_ymd <![CDATA[<=]]> TO_CHAR(SYSDATE,'YYYYMMDD') and store = #{store} order by web_open_ymd desc ) where rownum = 1
+	</select>
+	
+	<select id="retrieveMemType" parameterType="string" resultType="string">
+	            SELECT M.MEM_TYPE                  
+	              FROM AMS_MBR M                 
+	                 , AMS_CUS C                      
+	             WHERE M.CUS_NO = C.CUS_NO    
+	               AND C.PTL_ID = #{loginID}         
+	               AND ROWNUM = 1
+	</select>
+	
+	<select id="retrieveCustNo" parameterType="string" resultType="hashmap">
+        SELECT MAX (cust_no) BA_CUST_NO,								
+               MAX (akmem_cusno) AKMEM_CUSNO,						
+               MAX (akmem_card_no) AKMEM_CARD_NO,				
+               MAX(DI) DI ,														
+               CI ,																	
+               MAX(BIRTH_YMD) BIRTH_YMD									
+        FROM (																		
+              SELECT cust_no,													
+                     '' akmem_cusno,												
+                     '' akmem_card_no,											
+                     di,																
+                     ci,																
+                     birth_ymd														
+               FROM bacusttb#													
+              WHERE HQ  = 00														
+                AND STORE = '${store}'													
+                AND CI = '${ci}'												
+              UNION ALL															
+              SELECT ''  cust_no,												
+                     cus_no akmem_cusno,									           
+                    ( SELECT CARD_NO											
+                        FROM  ( SELECT CARD_NO							
+                                FROM AMS_CARD x								
+                               WHERE x.CARD_KND_DIV_CD IN ('1','2','8')		
+                                 AND x.HI_UPR_BL IS NULL					
+                                 AND x.cus_no = (select cus_no from AMS_CUS	
+                                                  where CI = '${ci}')					
+       ORDER BY x.ISU_DT DESC, x.RG_DTM DESC    )					
+                      WHERE ROWNUM = 1										
+                    ) akmem_card_no,											
+                    di,																
+                    ci,																
+                    bmd as birth_ymd											
+              FROM (SELECT cus_no, di, ci, bmd							
+                     FROM AMS_CUS												
+                    WHERE ci = '${ci}'											
+                   ) a																
+             )																			
+       GROUP BY CI	
+	</select>
+	<select id="checkDefaultStore" parameterType="string" resultType="hashmap">
+	   SELECT * FROM (
+	   		 SELECT ROWNUM AS RNUM,T.* FROM (
+	   		 SELECT  C.CI, A.CUST_NO, B.SALE_YMD || B.SALE_TIME AS MAXDATE, B.STORE FROM
+	   		          (
+	   		          SELECT A.CUST_NO, NVL(B.P_CUST_NO, A.CUST_NO) AS PCUSTNO, A.STORE FROM BACUSTTB A
+	   		          LEFT OUTER JOIN BACHLDTB B
+	   		          ON A.CUST_NO=B.C_CUST_NO AND A.STORE=B.STORE
+	   		          ) A INNER JOIN BAWBTRTB B
+	   		          ON A.CUST_NO=B.CUST_NO AND A.STORE=B.STORE
+	   		          INNER JOIN BACUSTTB C
+	   		  		    ON A.PCUSTNO=C.CUST_NO AND A.STORE=C.STORE
+	   		          WHERE C.CI='${ci}'
+	   		          ORDER BY  MAXDATE DESC  
+	   		 ) T 
+	   		 ) X  WHERE RNUM<![CDATA[<]]>2
+	</select>	
+	
+	<select id="retrieveCustNo2" parameterType="string" resultType="hashmap">
+                   SELECT CUST_NO as BA_CUST_NO,		
+                          DI, CI,  KOR_NM, STORE,				
+                          BIRTH_YMD								
+                    FROM bacusttb								
+                   WHERE HQ  = 00									
+                     AND STORE = '${store}'								
+                     AND CUST_NO = '${cust_no}'							
+	</select>	
+	
+<!-- 	<select id="getCustCount" parameterType="hashmap" resultType="hashmap"> -->
+<!-- 		SELECT COUNT(*) AS ucount, MAX(BF.store) AS store from BACUSTTB BU LEFT OUTER JOIN BAFASTRTB BF ON BU.CI=BF.CI where BU.CI= '${sCi}' -->
+<!-- 	</select> -->
+<!-- 	<select id="retrievePeriod" parameterType="hashmap" resultType="string"> -->
+<!-- 		SELECT -->
+<!--             get_web_period('${sAttendStore}') period -->
+<!--             FROM dual -->
+<!-- 	</select> -->
+<!-- 	<select id="retrieveStoreInfo" parameterType="string" resultType="hashmap"> -->
+<!-- 		select decode(store, '01', '������', '02', '������', '03', '�д���', '04', '������','05','������') store_nm ,store -->
+<!-- 		from bafastrtb -->
+<!-- 		where ci = '${ci}' -->
+<!-- 	</select> -->
+<!-- 	<select id="checkDefaultStore" parameterType="hashmap" resultType="string"> -->
+<!-- 		SELECT * FROM  -->
+<!--                  		 SELECT ROWNUM AS RNUM,T.* FROM  -->
+<!--                  		 SELECT  C.CI, A.CUST_NO, B.SALE_YMD || B.SALE_TIME AS MAXDATE, B.STORE FROM -->
+                 		          
+<!--                  		          SELECT A.CUST_NO, NVL(B.P_CUST_NO, A.CUST_NO) AS PCUSTNO, A.STORE FROM BACUSTTB A -->
+<!--                  		          LEFT OUTER JOIN BACHLDTB B -->
+<!--                  		          ON A.CUST_NO=B.C_CUST_NO AND A.STORE=B.STORE -->
+<!--                  		          ) A INNER JOIN BAWBTRTB B -->
+<!--                  		          ON A.CUST_NO=B.CUST_NO AND A.STORE=B.STORE -->
+<!--                  		          INNER JOIN BACUSTTB C -->
+<!--                  		  		    ON A.PCUSTNO=C.CUST_NO AND A.STORE=C.STORE -->
+<!--                  		          WHERE C.CI='${ci}' -->
+<!--                  		          ORDER BY  MAXDATE DESC   -->
+<!--                  		 ) T  -->
+<!--                  		 ) X  WHERE RNUM<![CDATA[<]]>2 -->
+<!-- 	</select> -->
+<!-- 	<select id="retrieveCustNo" parameterType="ak_web.vo.AttendCustVo" resultType="hashmap"> -->
+<!-- 		 SELECT MAX (cust_no) BA_CUST_NO,								 -->
+<!--                     MAX (akmem_cusno) AKMEM_CUSNO,						 -->
+<!--                     MAX (akmem_card_no) AKMEM_CARD_NO,				 -->
+<!--                     MAX(DI) DI ,														 -->
+<!--                     CI ,																	 -->
+<!--                     MAX(BIRTH_YMD) BIRTH_YMD									 -->
+<!--              FROM (																		 -->
+<!--                    SELECT cust_no,													 -->
+<!--                           '' akmem_cusno,												 -->
+<!--                           '' akmem_card_no,											 -->
+<!--                           di,																 -->
+<!--                           ci,																 -->
+<!--                           birth_ymd														 -->
+<!--                     FROM bacusttb#													 -->
+<!--                    WHERE HQ  = '${hq}'														 -->
+<!--                      AND STORE = '${store}'													 -->
+<!--                      AND CI = '${ci}'															 -->
+<!--                    UNION ALL															 -->
+<!--                    SELECT ''  cust_no,												 -->
+<!--                           cus_no akmem_cusno,									            -->
+<!--                          ( SELECT CARD_NO											 -->
+<!--                              FROM  ( SELECT CARD_NO							 -->
+<!--                                      FROM AMS_CARD x								 -->
+<!--                                     WHERE x.CARD_KND_DIV_CD IN ('1','2','8')		 -->
+<!--                                       AND x.HI_UPR_BL IS NULL					 -->
+<!--                                       AND x.cus_no = (select cus_no from AMS_CUS	 -->
+<!--                                                        where CI = '${ci}')					 -->
+<!--             ORDER BY x.ISU_DT DESC, x.RG_DTM DESC    )					 -->
+<!--                            WHERE ROWNUM = 1										 -->
+<!--                          ) akmem_card_no,											 -->
+<!--                          di,																 -->
+<!--                          ci,																 -->
+<!--                          bmd as birth_ymd											 -->
+<!--                    FROM (SELECT cus_no, di, ci, bmd							 -->
+<!--                           FROM AMS_CUS												 -->
+<!--                          WHERE ci = '${ci}'													 -->
+<!--                         ) a																 -->
+<!--                   )																			 -->
+<!--             GROUP BY CI																 -->
+<!-- 	</select> -->
+<!-- 	<select id="retrieveCustSeq" parameterType="ak_web.vo.AttendCustVo" resultType="string"> -->
+<!-- 		 select '88'||DECODE(?, '01', '7', '02', '8', '03', '9' ,'04', '6','05','5','4')||SUBSTR(?, 2, 3)||decode(count(seq_no),0,'0001',lpad(to_char(max(seq_no)+1),4,'0'))||'1' as SEQ_NO    -->
+<!-- 		 from bacseqtb 		 -->
+<!-- 		 where hq       = '${hq}'			 -->
+<!-- 		 and store    = '${store}'		 -->
+<!-- 		 and seq_fg   = '88'	 -->
+<!-- 		 and period   = '${period}'						 -->
+<!-- 	</select> -->
+<!-- 	<insert id="createCUSTNO" parameterType="ak_web.vo.AttendCustVo"> -->
+<!-- 		insert into bacseqtb -->
+<!-- 		( hq, store, seq_fg, period, seq_no, close_yn )			 -->
+<!-- 		values	 -->
+<!-- 		( '${hq}', '${store}', '88', '${period}', 1, 'N' ) -->
+<!-- 	</insert> -->
+<!-- 	<update id="updateCUSTNO" parameterType="ak_web.vo.AttendCustVo"> -->
+<!-- 		update bacseqtb		 -->
+<!-- 		set seq_no = substr(?,6,4)	 -->
+<!-- 		where hq      = '${hq}' -->
+<!-- 		and store   = '${store}' -->
+<!-- 		and period  = '${period}' -->
+<!-- 		and seq_fg  = '88' -->
+<!-- 	</update> -->
+<!-- 	<insert id="createBACUSTUser" parameterType="ak_web.vo.AttendCustVo"> -->
+<!-- 		  INSERT INTO BACUSTTB  (   -->
+<!--                              HQ,                -->
+<!--                              STORE,             -->
+<!--                              PERIOD,            -->
+<!--                              ID,                -->
+<!--                              CUST_NO,           -->
+<!--                              KOR_NM,            -->
+<!--                              ENG_NM,            -->
+<!--                              SEX_FG,            -->
+<!--                              DM_DISPH_PLACE_FG,  -->
+<!--                              MARRY_FG,          -->
+<!--                              MARRY_YMD,         -->
+<!--                              RESI_NO,           -->
+<!--                              PASSWORD,                                      -->
+<!--                              BIRTH_YMD,         -->
+<!--                              S_L_FG,                              -->
+<!--                              POST_NO1,          -->
+<!--                              POST_NO2,             -->
+<!--                              ADDR_TX,           -->
+<!--                              ADDR_TX1,          -->
+<!--                              ADDR_TX2,                         -->
+<!--                              PHONE_NO1,                                       -->
+<!--                              PHONE_NO2,         -->
+<!--                              PHONE_NO3,         -->
+<!--                              H_PHONE_NO_1,      -->
+<!--                              H_PHONE_NO_2,                        -->
+<!--                              H_PHONE_NO_3,      -->
+<!--                              EMAIL_ADDR,                          -->
+<!--                              CONFIRM_YN,        -->
+<!--                              ACCEPT_YMD,                          -->
+<!--                              CREATE_RESI_NO,    -->
+<!--                              CREATE_DATE,                         -->
+<!--                              EMAIL_YN,          -->
+<!--                              SMS_YN,                              -->
+<!--                              LEAVE_YN,          -->
+<!--                              PTL_ID,            -->
+<!--                              PTL_PW,              -->
+<!--                              CUS_NO,                                                                    -->
+<!--                              CONFIRM_DATE,      -->
+<!--                              RESI_NO6,          -->
+<!--                              DI,                -->
+<!--                              CI,                -->
+<!--                              CLUB_1,            -->
+<!--                              H_NEW_ADDR_YN,          -->
+<!--                              HOM_ADDR_IN_FG,        -->
+<!--                              SYNC_NEW_YN    )       -->
+<!--                       SELECT   '${hq}'                                                    -->
+<!--                               ,'${store}'                                                        -->
+<!--                               ,'${period}'                                                        -->
+<!--                               ,c.PTL_ID                                              -->
+<!--                               ,'${custno}'                                                       -->
+<!--                               ,c.CUS_PN               -->
+<!--                               ,c.ENG_PN           -->
+<!--                               ,c.NTR_DC           -->
+<!--                               ,c.PSMT_RVP_CD  DM_DISPH_PLACE_FG    -->
+<!--                               ,DECODE(c.WEDD_YN, 'N', '2', 'Y', '1')    -->
+<!--                               ,c.WEDD_DT          -->
+<!--                               ,c.RRNO   -->
+<!--                               ,c.PTL_PW                                          -->
+<!--                               ,c.BMD                                             -->
+<!--                               ,c.SLR_DC                                          -->
+<!--                               ,SUBSTR(a.PSNO,1,3) POST_NO1             -->
+<!--                               ,SUBSTR(a.PSNO,4,3) POST_NO2             -->
+<!--                               ,a.PNADD||' '||a.DTS_ADDR   ADDR_TX     -->
+<!--                               ,a.PNADD ADDR_TX1                     -->
+<!--                               ,a.DTS_ADDR ADDR_TX2                     -->
+<!--                               ,a.TEL_ZON_NO PHONE_NO1          -->
+<!--                               ,a.TEL_EX_NO PHONE_NO2          -->
+<!--                               ,a.TEL_UNIQ_NO PHONE_NO3      -->
+<!--                               ,c.MTEL_IDENT_NO H_PHONE_NO_1          -->
+<!--                               ,c.MMT_EX_NO H_PHONE_NO_2          -->
+<!--                               ,c.MTEL_UNIQ_NO H_PHONE_NO_3                             -->
+<!--                               ,c.EMAIL_ADDR                                -->
+<!--                               ,'Y'                                       -->
+<!--                               ,TO_CHAR(SYSDATE,'YYYYMMDD')               -->
+<!--                               ,'CULTURE_WEB'                             -->
+<!--                               ,TO_CHAR(SYSDATE,'YYYYMMDDHH24MISS')         -->
+<!--                               ,c.EMAIL_RCV_YN            -->
+<!--                               ,c.SMS_RCVR_YN          -->
+<!--                               ,'N'                                       -->
+<!--                               ,c.PTL_ID                                    -->
+<!--                               ,c.PTL_PW                                  -->
+<!--                               ,c.CUS_NO                             -->
+<!--                               ,(SELECT m.ENT_DT                                            -->
+<!--                                   FROM AMS_MBR m                                       -->
+<!--                                  WHERE m.CUS_NO = c.CUS_NO) AS BEG_ENT_DT                        -->
+<!--                               ,substr(c.BMD, 3, 8) as RESI_NO6       -->
+<!--                               ,c.DI                                 -->
+<!--                               ,c.CI                                 -->
+<!--                               ,NVL((SELECT b.USE_YN                             -->
+<!--                                       FROM AMS_MBR_CLUB b                  -->
+<!--                                      WHERE b.CLUB_CD = '01'                   -->
+<!--                                        AND b.CUS_NO = c.CUS_NO             -->
+<!--                                   ),'N')                                               -->
+<!--                               ,a.NEW_ADDR_YN  AS H_NEW_ADDR_YN    // ���ּ� ��/�� ���а� �߰� (2013.12.10) 1:�Է�����, 2:�Էµ��θ�, 3:ǥ������, 4:ǥ�ص��θ� -->
+<!--                               ,a.ADDR_IN_FG                       // ���� ���� ���俩��  (2013.12.10) -->
+<!--                               ,'Y'                                      // ���������ÿϷῩ��  (2016.02.29) -->
+<!--                           FROM AMS_CUS c                    -->
+<!--                              , AMS_CUS_ADDR a                -->
+<!--                          WHERE c.CUS_NO = a.CUS_NO(+)       -->
+<!--                             AND a.ADDR_DC(+) = '1'               -->
+<!--                             AND a.ADDR_UPS_YN(+) = 'Y'         -->
+<!--                             AND a.FNL_ADDR_YN(+) = 'Y'         -->
+<!--                             AND c.CI='${ci}'                           -->
+<!-- 	</insert> -->
+</mapper>

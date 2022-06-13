@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="/web/csMapper">
+	<select id="getIndex" parameterType="hashmap" resultType="string">
+		select CULT_VOC_SQ.NEXTVAL AS indexno from dual
+	</select>
+	<insert id="insContact" parameterType="hashmap">
+		INSERT INTO BVMASTTB@AKRIS(     
+		 HQ,							 
+		 STORE, 							
+		 ID_NUM, 						
+		 SYSTEM_FG,					
+		 DIV,							
+		 DEPT, 						
+		 PC, 						
+		 TYPE, 							
+		 SUBJECT, 					
+		 CONTENT,						
+		 RECP_DATE,								
+		 RECP_ID, 						
+		 RECP_WAY, 						
+		 RECP_TYPE, 						
+		 CUST_SEQ, 							
+		 CUST_NM, 							
+		 PHONE_NO1, 						
+		 PHONE_NO2, 							
+		 PHONE_NO3, 							
+		 EMAIL, 						
+		 CUST_RESLT, 											
+		 END_RESLT, 											
+		 END_DATE, 											
+		 STATUS, 											
+		 SINGLE, 											
+		 DOCUMENT, 											
+		 DELETE_FG, 											
+		 DELETE_DATE, 											
+		 UPDATE_DATE, 											
+		 IP_ADDRESS, 											
+		 PASSWORD, 											
+		 FLOOR, 											
+		 SMS_YN, 											
+		 SMS_SEND_DATE, 											
+		 PTL_ID )											
+		 VALUES ('00','${user_store}','${indexno}','CA',NULL,NULL,'00','${user_type}','${user_title}','${user_content}',TO_CHAR(SYSDATE,'yyyymmddhh24miss'),DECODE('${user_store}', '01', '0000000000000','02', '0000000000000','03', '0000000000000','04', '0000000000000','0000000000000') , 
+		 '06','1','1','${user_name}','${user_phone1}','${user_phone2}','${user_phone3}','${user_email}',NULL,NULL,NULL,'0','0',NULL,'0',NULL,TO_CHAR(SYSDATE,'yyyymmddhh24miss'),'${ip}', 
+		 NULL,NULL,'N',NULL,'${id}')
+	</insert>
+</mapper>

@@ -1,0 +1,515 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="/web/courseMapper">
+	<select id="test" parameterType="hashmap" resultType="hashmap">
+		select * from bapelttb where rownum=1
+	</select>
+	<select id="getCanc" parameterType="hashmap" resultType="string">
+		select contents from bacanctb
+	</select>
+	<select id="getPeltCount" parameterType="hashmap" resultType="hashmap">
+				SELECT count(*) as cnt																																												
+		             FROM BAPELTTB A, BAWAITTB B, BAWLECTB C																
+					WHERE A.HQ      = 00																									
+		            AND A.STORE   = '${store}'																									
+		            AND A.PERIOD  = '${period}'			
+		            <if test="!month_val.equals('')">																				
+			            AND TO_NUMBER(NVL(LTRIM(RTRIM(A.MONTH_NO1)),'00')) <![CDATA[>=]]> TO_NUMBER(NVL('${month_val}','00'))		
+			            AND TO_NUMBER(NVL(LTRIM(RTRIM(A.MONTH_NO )),'99')) <![CDATA[<=]]> TO_NUMBER(NVL('${month_val}','99'))	
+		            </if>
+		            AND A.END_YN =  'N'																									
+		            AND A.SUBJECT_NM NOT LIKE '%합반%'																		
+		            AND A.HQ         = C.HQ																								
+		            AND A.STORE      = C.STORE																						
+		            AND A.SUBJECT_CD = C.SUBJECT_CD	
+		            AND A.PERIOD     = C.PERIOD			
+		           <if test="!search_name.equals('')"> 															
+			            AND (UPPER(C.SUBJECT_NM)   LIKE '%'||UPPER('${search_name}')||'%'													
+			            		or 
+			            	 C.LECTURER_NM LIKE '%'||UPPER('${search_name}')||'%')		
+		            </if> 
+		            	 													
+		            AND B.HQ(+) = A.HQ																									
+		            AND B.STORE(+) = A.STORE																						
+		            AND B.PERIOD(+) = A.PERIOD																						
+		            AND B.SUBJECT_CD(+) = A.SUBJECT_CD																		
+		            AND B.DELETE_FG(+) = '1'																													
+		            
+		            <if test="!main_cd.equals('')">
+		            	AND A.MAIN_CD = '${main_cd}'
+		            </if>
+		            
+		            <if test="!sect_cd.equals('')">
+		            	AND A.SECT_CD in (${sect_cd})
+		            </if>
+		            
+					 <if test="!yoil.equals('0000000')">
+			                and ( 
+			                    1=2
+			                     or (substr(day_flag,'1','1')=1 and substr('${yoil}','1','1')=1)
+			                     or (substr(day_flag,'2','1')=1 and substr('${yoil}','2','1')=1)
+			                     or (substr(day_flag,'3','1')=1 and substr('${yoil}','3','1')=1)
+			                     or (substr(day_flag,'4','1')=1 and substr('${yoil}','4','1')=1)
+			                     or (substr(day_flag,'5','1')=1 and substr('${yoil}','5','1')=1)
+			                     or (substr(day_flag,'6','1')=1 and substr('${yoil}','6','1')=1)
+			                     or (substr(day_flag,'7','1')=1 and substr('${yoil}','7','1')=1)	
+			                 )
+			        </if>
+					 <if test="!subject_fg.equals('')">																				
+			            AND subject_fg in (${subject_fg})		
+		            </if>
+		           
+		
+	</select>
+
+
+	<select id="getPelt" parameterType="hashmap" resultType="hashmap">
+	select
+		X.*
+		from ( 
+		    select rownum as rnum, A.*
+		    from ( 
+		    	select
+		    		A.LECT_CNT
+		    		,A.STORE
+   					,(select short_name from bacodetb where code_fg = '09' and sub_code = A.MAIN_CD) as MAIN_NM
+		    		,decode(A.SUBJECT_FG, '1', '정규', '2', '단기', '3', '특강') as SUBJECT_FG_NM
+		            ,A.SUBJECT_CD																								
+		            ,UPPER(A.SUBJECT_NM) SUBJECT_NM																			
+		            ,C.LECTURER_NM
+		            ,C.IMAGE_PIC																										
+		            ,A.START_YMD, A.END_YMD																						
+		            ,(CASE WHEN SUBSTR(A.DAY_FLAG, 1, 1) = '1' THEN '월' ELSE '' END)||								
+		            (CASE WHEN SUBSTR(A.DAY_FLAG, 2, 1) = '1' THEN '화' ELSE '' END)||								
+		            (CASE WHEN SUBSTR(A.DAY_FLAG, 3, 1) = '1' THEN '수' ELSE '' END)||								
+		            (CASE WHEN SUBSTR(A.DAY_FLAG, 4, 1) = '1' THEN '목' ELSE '' END)||								
+		            (CASE WHEN SUBSTR(A.DAY_FLAG, 5, 1) = '1' THEN '금' ELSE '' END)||								
+		            (CASE WHEN SUBSTR(A.DAY_FLAG, 6, 1) = '1' THEN '토' ELSE '' END)||								
+		            (CASE WHEN SUBSTR(A.DAY_FLAG, 7, 1) = '1' THEN '일' ELSE '' END) AS DAY						
+		            ,SUBSTR(A.LECT_HOUR,1,2)||':'||SUBSTR(A.LECT_HOUR,3,2)||'~'||									
+		            SUBSTR(A.LECT_HOUR,5,2)||':'||SUBSTR(A.LECT_HOUR,7,2) LECT_HOUR							
+		            ,NVL(A.REGIS_FEE,0)  REGIS_FEE																				
+		            ,NVL(A.FOOD_AMT,0)  FOOD_AMT																				
+		            ,A.CAPACITY_NO																										                          
+		            ,A.CAPACITY_NO - (NVL(A.WEB_REGIS_NO,0) + NVL(A.REGIS_NO,0)+(COUNT(B.CUST_NO))) POSSIBLE_NO 	
+		            ,(SELECT D.SHORT_NAME FROM BACODETB D																
+		               WHERE CODE_FG = '12'																							
+		               AND TRIM(SUB_CODE) = A.CLASSROOM																		
+		               AND DELETE_YN = 'N' )																							
+		             || ' / '|| SUBSTR(CLASSROOM,3,1) ||'층-'|| SUBSTR(CLASSROOM,3,3) ||'호' CLASSROOM		
+		            ,A.LECT_PART,A.MAIN_CD																							
+		            ,A.SECT_CD, TRIM(BA_SECT_NM(A.HQ, A.STORE, A.MAIN_CD, A.SECT_CD)) SECT_NM			
+		            ,A.FOOD_YN					
+		            ,(SELECT COUNT(*) FROM BAREVIEWTB WHERE SUBJECT_CD = A.SUBJECT_CD) as RECO_CNT			
+		            ,A.REGIS_NO, A.THUMBNAIL_IMG, A.DETAIL_IMG																			
+		             FROM BAPELTTB A, BAWAITTB B, BAWLECTB C																
+					WHERE A.HQ      = 00																									
+		            AND A.STORE   = '${store}'																									
+		            AND A.PERIOD  = '${period}'			
+		            AND A.END_YN =  'N'																									
+		            AND A.SUBJECT_NM NOT LIKE '%합반%'																		
+		            AND A.HQ         = C.HQ																								
+		            AND A.STORE      = C.STORE																						
+		            AND A.SUBJECT_CD = C.SUBJECT_CD				
+		            AND A.PERIOD     = C.PERIOD
+		            	 													
+		            AND B.HQ(+) = A.HQ																									
+		            AND B.STORE(+) = A.STORE																						
+		            AND B.PERIOD(+) = A.PERIOD																						
+		            AND B.SUBJECT_CD(+) = A.SUBJECT_CD																		
+		            AND B.DELETE_FG(+) = '1'		
+		            <if test="!month_val.equals('')">																				
+			            AND TO_NUMBER(NVL(LTRIM(RTRIM(A.MONTH_NO1)),'00')) <![CDATA[>=]]> TO_NUMBER(NVL('${month_val}','00'))		
+			            AND TO_NUMBER(NVL(LTRIM(RTRIM(A.MONTH_NO )),'99')) <![CDATA[<=]]> TO_NUMBER(NVL('${month_val}','99'))	
+		            </if>
+		            																											
+		           <if test="!search_name.equals('')"> 															
+			            AND (UPPER(A.SUBJECT_NM)   LIKE '%'||UPPER('${search_name}')||'%'													
+			            		or 
+			            	 C.LECTURER_NM LIKE '%'||UPPER('${search_name}')||'%')		
+		            </if> 
+		            
+		            <if test="!main_cd.equals('')">
+		            	AND A.MAIN_CD = '${main_cd}'
+		            </if>
+		            
+		            <if test="!sect_cd.equals('')">
+		            	AND A.SECT_CD in (${sect_cd})
+		            </if>
+		            
+					<if test="!yoil.equals('0000000')">
+			                and ( 
+			                    1=2
+			                     or (substr(day_flag,'1','1')=1 and substr('${yoil}','1','1')=1)
+			                     or (substr(day_flag,'2','1')=1 and substr('${yoil}','2','1')=1)
+			                     or (substr(day_flag,'3','1')=1 and substr('${yoil}','3','1')=1)
+			                     or (substr(day_flag,'4','1')=1 and substr('${yoil}','4','1')=1)
+			                     or (substr(day_flag,'5','1')=1 and substr('${yoil}','5','1')=1)
+			                     or (substr(day_flag,'6','1')=1 and substr('${yoil}','6','1')=1)
+			                     or (substr(day_flag,'7','1')=1 and substr('${yoil}','7','1')=1)	
+			                 )
+			        </if>
+			        <if test="!subject_fg.equals('')">																				
+			           AND subject_fg in (${subject_fg})		
+		            </if>
+		            
+		            GROUP BY A.LECT_CNT,A.SUBJECT_FG,A.SUBJECT_CD, A.SUBJECT_NM, C.LECTURER_NM, A.START_YMD, A.END_YMD, A.DAY_FLAG, A.LECT_HOUR, A.REGIS_FEE, A.FOOD_AMT,
+		            A.CAPACITY_NO, A.WEB_REGIS_NO, A.REGIS_NO, A.CLASSROOM, A.LECT_PART, A.MAIN_CD, A.SECT_CD, A.HQ, A.STORE, A.FOOD_YN, C.IMAGE_PIC, A.THUMBNAIL_IMG, A.DETAIL_IMG
+		            ORDER BY UPPER(A.SUBJECT_NM), C.LECTURER_NM
+				
+		    ) A
+		    where rownum <![CDATA[<=]]> #{e_rownum}) X
+		where X.rnum <![CDATA[>]]> #{s_rownum}
+   		order by ${sort_type} desc
+	</select>
+	
+	<select id="getReviewCount" parameterType="hashmap" resultType="hashmap">
+				SELECT count(*) as cnt from bareviewtb where store ='${store}' and period ='${period}' and subject_cd = '${subject_cd}'
+		
+	</select>
+
+
+	<select id="getReview" parameterType="hashmap" resultType="hashmap">
+	select
+		X.*
+		from ( 
+		    select rownum as rnum, A.*
+		    from ( 
+		    	select
+			    	a.content,
+	                (select kor_nm from bacusttb where cust_no = a.cust_no and store = a.store) as kor_nm,
+	                TO_CHAR(TO_DATE(a.create_date, 'YYYYMMDDHH24MISS'), 'YYYY.MM.DD') as create_date,
+	                a.views,
+	                a.cust_no
+		        FROM bareviewtb a where
+		             store ='${store}'
+		             and period ='${period}'
+		             and subject_cd ='${subject_cd}'
+				
+		    ) A
+		    where rownum <![CDATA[<=]]> #{e_rownum}) X
+		where X.rnum <![CDATA[>]]> #{s_rownum}
+	</select>
+	<update id="upReviewViews" parameterType="hashmap">
+		update bareviewtb
+		set
+		views = (select views+1 from bareviewtb where store = '${store}' and period = '${period}' and subject_cd = '${subject_cd}')
+		where
+		store = '${store}' and period = '${period}' and subject_cd = '${subject_cd}' and cust_no = ${cust_no}
+	</update>
+	
+	<select id="courseChk" parameterType="hashmap" resultType="int">
+			select count(*) as cnt from baperetb where 
+					cust_no='${cust_no}'
+				and subject_cd = '${subject_cd}'
+				and store ='${store}'
+				and period ='${period}'
+	</select>
+	
+
+
+	<select id="getPeltOne" parameterType="hashmap" resultType="hashmap">
+		select
+		(select bmd from ams_cus where cus_no = bapelttb.cus_no) as bmd,
+		(select short_name from bacodetb where code_fg = '09' and sub_code = bapelttb.main_cd) as MAIN_NM,
+	    (select sect_nm from basecttb where store = '03' and main_cd = bapelttb.main_cd and sect_cd = bapelttb.sect_cd) as SECT_NM,
+	    (select short_name from bacodetb where code_fg = '02' and sub_code = bapelttb.store) as STORE_NAME,
+	    balecttb.lect_cd,
+		bapelttb.*
+		from bapelttb, balecttb
+		where bapelttb.store = '${store}' and bapelttb.period = '${period}' and bapelttb.subject_cd = '${subject_cd}' and balecttb.store = '${store}' and balecttb.subject_cd = '${subject_cd}'
+	</select>
+
+	<select id="getPlanDetail" parameterType="hashmap" resultType="hashmap">
+		select * from baplantb where store = '${store}' and period = '${period}' and subject_cd = '${subject_cd}'
+	</select>
+
+	<select id="chk_bookshelf" resultType="hashmap">
+		select count(*) as cnt from babook_shelftb where 1=1
+		    and store = '${store}'
+		    and period = '${period}'
+		    and subject_cd = '${subject_cd}'
+		    and cust_no = '${cust_no}'
+		    and use_yn ='Y'
+	</select>
+
+	<insert id="ins_bookshelf" parameterType="hashmap">
+		insert into babook_shelftb
+		(
+			STORE,		PERIOD,
+			SUBJECT_CD,	CUST_NO,
+			CREATE_DATE
+		)
+		VALUES
+		(
+			'${store}',			'${period}',
+			'${subject_cd}', 	'${cust_no}',
+			TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+		)
+	</insert>
+
+	<select id="getSecCd" parameterType="hashmap" resultType="hashmap">
+		select * from basecttb where main_cd = '${sub_code}'
+	</select>
+	
+	<select id="chk_cancel" parameterType="hashmap" resultType="hashmap">
+       select subject_cd from BAPERETB where 1=1
+	       and hq  			   =00 
+	       and store 		   = '${store}'    
+	       and period          = '${period}'                       
+	       and cust_no         = '${cust_no}'                       
+	       and subject_cd      = '${subject_cd}'                       
+	       and pay_yn          = 'Y'                     
+	       and regis_cancel_fg = '1'           
+	                 
+       union               
+                                 
+       select subject_cd from bawbtrtb  where 1=1 
+	       and hq            = 00                       
+	       and store         = '${store}'                         
+	       and cust_no       = '${cust_no}'                       
+	       and subject_cd 	 = '${subject_cd}'                            
+	       and period     	 = '${period}'                            
+	       and send_yn    	 = 'N' 
+	</select>
+	
+	<select id="chk_session_id" parameterType="hashmap" resultType="hashmap">
+		SELECT nvl(count(*),0) cnt from bat from batemptb where 1=1
+			and hq=00
+			and store = '${store}'
+			and cust_no = '${cust_no}'
+			and sessionid NOT IN ${user_id}
+	</select>
+	
+	<select id="temp_chklist_1" parameterType="hashmap" resultType="hashmap">
+            select subject_cd                            
+            from BAPERETB                                
+            where hq  =00 and store = ${store}                   
+            and period          = ${period}                      
+            and cust_no         = ${cust_no}                      
+            and subject_cd      = ${subject_cd}                      
+            and pay_yn          = 'Y'                    
+            and regis_cancel_fg = '1'                    
+            union                                        
+            select subject_cd                            
+            from bawbtrtb                                
+            where hq            = 00                      
+            and store         = ${store}                        
+            and cust_no         = ${cust_no}                      
+            and subject_cd = ${subject_cd}                          
+            and period     = ${period}                           
+            and send_yn    = 'N'   
+	</select>
+	
+	<select id="temp_chklist_2" parameterType="hashmap" resultType="hashmap">
+			SELECT nvl(count(*),0) cnt   
+			from batemptb
+			where hq=00
+			and store = '${store}'
+			and cust_no = '${cust_no}'
+			and sessionid NOT IN '${cust_id}'
+	</select>
+	
+	<select id="temp_chklist_3" parameterType="hashmap" resultType="hashmap">
+			select nvl(count(*),0) cnt 
+			from batemptb
+			where hq=00
+			and store = '${store}'
+			and cust_no = '${cust_no}'
+			and subject_cd ='${subject_cd}'
+			and cust_ip ='${ipAddress}'
+			and sessionid = '${cust_id}'
+	</select>
+	
+	<select id="temp_chklist_4" parameterType="hashmap" resultType="hashmap">
+            SELECT NVL(CAPACITY_NO,0) CAPACITY_NO,    	
+            NVL(REGIS_NO,0) + NVL(WEB_REGIS_NO,0) +   	
+             (SELECT COUNT(CUST_NO) FROM BAWAITTB   	
+               WHERE HQ =C.HQ   										
+                AND STORE =C.STORE   								
+                AND PERIOD = C.PERIOD   							
+                AND SUBJECT_CD =C.SUBJECT_CD   				
+                AND DELETE_FG ='1' ) REGIS_NO  					
+            FROM BAPELTTB C                                   		
+            WHERE HQ         	= 00                             		
+            AND STORE      		= '${store}'                              		
+            AND PERIOD     		= '${period}'                               		
+            AND SUBJECT_CD 	= '${subject_cd}'                               		
+            FOR UPDATE OF WEB_REGIS_NO
+	</select>
+	
+	<insert id="addToTemp" parameterType="hashmap">
+			insert into batemptb (
+				cust_ip, cust_no, subject_cd, update_date, sessionid, hq, store, p_cust, c_cust1, c_cust2
+			) values ( 
+				'${ipAddress}', '${cust_no}', '${subject_cd}', to_char(sysdate,'yyyymmddhh24miss'), '${cust_id}', '00', '${store}','${p_cust}', '${c_cust1}', '${c_cust2}') 
+			
+	</insert>
+	<update id="upToTemp" parameterType="hashmap">
+		update batemptb
+		set
+		p_cust = '${p_cust}',
+		c_cust1 = '${c_cust1}',
+		c_cust2 = '${c_cust2}',
+		update_date = to_char(sysdate,'yyyymmddhh24miss')
+		where 
+		store = '${store}'
+		and subject_cd = '${subject_cd}'
+		and cust_no = '${cust_no}' 
+	</update>
+	
+	<update id="tempDateUpdate" parameterType="hashmap">
+			update batemptb set update_date=to_char(sysdate,'yyyymmddhh24miss')
+			, pay_date=decode(pay_date, null, null, to_char(sysdate,'yyyymmddhh24miss'))
+			where hq = 00 and store = '${store}' and cust_no = '${cust_no}' 
+			
+	</update>
+	
+	<select id="retrieveListLecture" parameterType="hashmap" resultType="hashmap">
+            SELECT distinct                                                              
+            a.main_cd                                                                    
+            ,a.sect_cd                                                                   
+            ,trim(ba_sect_nm(a.hq, a.store, a.main_cd, a.sect_cd)) sect_nm               
+            ,lengthb(trim(ba_sect_nm(a.hq, a.store, a.main_cd, a.sect_cd))) sect_nm_len  
+            from BAPELTTB a                                  
+            where a.hq      = 00                             
+            and a.store   = '${store}'                                
+            and a.period  = '${period}'         
+         <if test="!main_cd.equals('')">
+		    and a.main_cd like '${main_cd}'||'%'
+		</if>
+			order by a.main_cd, a.sect_cd
+	</select>
+
+	<select id="retrieveLecture" parameterType="hashmap" resultType="hashmap">
+            SELECT 
+            B.HQ
+            ,B.CAPACITY_NO - (NVL(B.WEB_REGIS_NO,0) + NVL(B.REGIS_NO,0)+(COUNT(C.CUST_NO))) POSSIBLE_NO 	
+            ,B.STORE
+            ,B.PERIOD
+            ,(select short_name from bacodetb where CODE_FG = '02' and sub_code = B.STORE) as store_nm
+            ,A.SUBJECT_CD																					
+            ,B.START_YMD																							
+            ,B.END_YMD																								
+            ,B.LECT_CNT
+            ,B.THUMBNAIL_IMG
+            ,B.DETAIL_IMG																							
+            ,(CASE WHEN SUBSTR(b.DAY_FLAG, 1, 1) = '1' THEN '월' ELSE '' END)||					
+            (CASE WHEN SUBSTR(b.DAY_FLAG, 2, 1) = '1' THEN '화' ELSE '' END)||					
+            (CASE WHEN SUBSTR(b.DAY_FLAG, 3, 1) = '1' THEN '수' ELSE '' END)||					
+            (CASE WHEN SUBSTR(b.DAY_FLAG, 4, 1) = '1' THEN '목' ELSE '' END)||					
+            (CASE WHEN SUBSTR(b.DAY_FLAG, 5, 1) = '1' THEN '금' ELSE '' END)||					
+            (CASE WHEN SUBSTR(b.DAY_FLAG, 6, 1) = '1' THEN '토' ELSE '' END)||					
+            (CASE WHEN SUBSTR(b.DAY_FLAG, 7, 1) = '1' THEN '일' ELSE '' END) AS DAY			
+            ,SUBSTR(B.LECT_HOUR,1,2)||':'||SUBSTR(B.LECT_HOUR,3,2)||'~'||						
+            SUBSTR(B.LECT_HOUR,5,2)||':'||SUBSTR(B.LECT_HOUR,7,2) LECT_HOUR				
+            ,B.REGIS_FEE																								
+            ,B.FOOD_AMT																								
+            ,UPPER(A.SUBJECT_NM) SUBJECT_NM																
+            ,A.LECTURER_NM																							
+            ,A.IMAGE_PIC																								
+            ,NVL(A.LECTURER_CAREER , ' ') LECTURER_CAREER												
+            ,NVL(A.LECTURE_CONTENT , ' ') LECTURE_CONTENT											
+            ,NVL(A.LECTURER_COMMENT, ' ') LECTURER_COMMENT										
+            ,A.ETC																										
+            ,B.MAIN_CD																									
+            ,B.SECT_CD														
+            ,BA_MAIN_NM(B.MAIN_CD) AS MAIN_NM
+            ,BA_SECT_NM(B.HQ, B.STORE, B.MAIN_CD, B.SECT_CD) AS SECT_NM										
+            ,B.CAPACITY_NO - (NVL(B.WEB_REGIS_NO,0) + NVL(B.REGIS_NO,0)+(COUNT(C.CUST_NO))) POSSIBLE_NO 	<!-- 대기자 추가 -->
+             FROM BAWLECTB A, BAPELTTB B, BAWAITTB C													
+             WHERE B.HQ = 00																							
+             AND B.STORE = '${store}'																						
+             AND B.PERIOD     = '${period}'																					
+             AND B.SUBJECT_CD = '${subject_cd}'																				
+             AND B.HQ         = A.HQ																				
+             AND B.STORE      = A.STORE																			
+             AND B.SUBJECT_CD = A.SUBJECT_CD																
+             AND C.HQ(+) = B.HQ																					
+             AND C.STORE(+) = B.STORE																			
+             AND C.PERIOD(+) = B.PERIOD																		
+             AND C.SUBJECT_CD(+) = B.SUBJECT_CD															
+             AND C.DELETE_FG(+) = '1'																			
+            GROUP BY B.HQ,B.STORE,A.SUBJECT_CD,B.START_YMD,B.END_YMD,B.LECT_CNT,B.THUMBNAIL_IMG, B.DETAIL_IMG, b.DAY_FLAG,B.LECT_HOUR 			
+            ,B.REGIS_FEE,B.FOOD_AMT,A.SUBJECT_NM,A.LECTURER_NM,A.IMAGE_PIC,A.LECTURER_CAREER			
+            ,A.LECTURE_CONTENT ,A.LECTURER_COMMENT,  A.ETC,B.MAIN_CD, B.SECT_CD,B.CAPACITY_NO		                                                                                                                                                                                         
+            ,B.WEB_REGIS_NO,B.REGIS_NO,B.PERIOD
+	</select>
+	
+	<update id="tempAlter" parameterType="hashmap">
+		alter session set events '60025 trace name context forever'
+	</update>
+	
+	<select id="lecturePhoto" parameterType="hashmap" resultType="hashmap">
+            select (select nvl(FILE_OBJ,'')              
+             from  AXFILETB                              
+             where to_char(file_no) = a.file_no) as file_obj    
+            from bawlectb a                              
+             where a.hq = 00                              
+            and a.store = '${store}'                             
+            and a.subject_cd = '${subject_cd}'                       
+            and rownum = 1        
+	</select>
+	
+	<select id="selectWaitLectureCnt" parameterType="hashmap" resultType="int">
+			SELECT NVL(COUNT(*), 0) AS CNT   
+			FROM  BAWAITTB
+			WHERE  CUST_NO    = '${cust_no}'
+			AND  PERIOD       = '${period}'
+			AND POS_NO = '070013'
+			
+	</select>
+	
+	<select id="selectWaitState" parameterType="hashmap" resultType="String">
+			SELECT DELETE_FG   -- 1:대기, 2:등록, 3:취소   
+			FROM  BAWAITTB
+			WHERE  HQ           = 00
+			AND  STORE        = '${store}'
+			AND  PERIOD       = '${period}'
+			AND  SUBJECT_CD   = '${subject_cd}'
+			AND  CUST_NO      = '${cust_no}'
+			
+	</select>
+	
+	<update id="updateWaitState" parameterType="hashmap">
+           	UPDATE BAWAITTB SET                                   	
+  				POS_NO = '070013'                                	
+  				, MAIN_CD = '${main_cd}' -- 강좌 대분류                      	
+  				, SECT_CD = '${sect_cd}' -- 강좌 중분류                      	
+  				, REGI_DATE = TO_CHAR(SYSDATE,'YYYYMMDDHH24MISS') 	
+  				, COMMENTS = NULL                                 	
+  				, CANCEL_DATE= NULL                               	
+  				, DELETE_FG ='1'                                  	
+  				, UPDATE_RESI_NO = 'WebSystem'                    	
+  				, UPDATE_DATE =TO_CHAR(SYSDATE,'YYYYMMDDHH24MISS')		
+  			WHERE  HQ           = 00                     			
+  				AND  STORE        = '${store}'                       		
+  				AND  PERIOD       = '${period}'                       		
+  				AND  SUBJECT_CD   = '${subject_cd}'                       		
+  				AND  CUST_NO      = '${cust_no}'        
+	</update>
+	
+	<insert id="addWaitLecture" parameterType="hashmap">
+         	INSERT INTO BAWAITTB																
+   				(HQ, STORE, PERIOD, POS_NO, MAIN_CD, SECT_CD, SUBJECT_CD, CUST_NO, REGI_DATE	 
+   					, COMMENTS, CANCEL_DATE, DELETE_FG, CREATE_RESI_NO, CREATE_DATE)        	
+   			VALUES                                                                          	
+   				(00, '${store}', '${period}', '070013', '${main_cd}', '${sect_cd}', '${subject_cd}', '${cust_no}', TO_CHAR(SYSDATE,'YYYYMMDDHH24MISS')         	
+   					, NULL, NULL, '1', 'WebSystem', TO_CHAR(SYSDATE,'YYYYMMDDHH24MISS'))    	    
+			
+	</insert>
+	<select id="getWlect" parameterType="hashmap" resultType="hashmap">
+			select * from bawlectb where store = '${store}' and subject_cd = '${subject_cd}' and rownum = 1
+			
+	</select>
+	<select id="findChildByCust" parameterType="hashmap" resultType="hashmap">
+			select * from bachildtb_mu where cust_no = '${cust_no}' order by child_no
+			
+	</select>
+	<select id="getIsTwo" parameterType="hashmap" resultType="string">
+		select nvl(is_two, 'N') from bapelttb where store = '${store}' and period = '${period}' and subject_cd = '${subject_cd}'
+	</select>
+	
+</mapper>

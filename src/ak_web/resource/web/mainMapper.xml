@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="/web/mainMapper">
+   <select id="getBranch" parameterType="hashmap" resultType="hashmap">
+		select * from BACODETB where CODE_FG = '02'
+	</select>
+	
+   <select id="get1Depth" parameterType="hashmap" resultType="hashmap">
+		select * from BACODETB where CODE_FG = '09' and delete_yn != 'Y' order by TO_NUMBER(sub_code)
+	</select>
+	
+	<select id="getSecCd" parameterType="hashmap" resultType="hashmap">
+		select * from basecttb where (store = '${store}' or store is null) and main_cd = '${main_cd}' and performance != 'OFF' and delete_yn != 'Y'
+	</select>
+	<select id="getMBanner" parameterType="hashmap" resultType="hashmap">
+		select * from bambanner_mu where is_show = 'Y' and start_ymd <![CDATA[<=]]> TO_CHAR(SYSDATE, 'YYYYMMDD') and end_ymd <![CDATA[>=]]> TO_CHAR(SYSDATE, 'YYYYMMDD') order by sort
+	</select>
+	<select id="getSBanner" parameterType="hashmap" resultType="hashmap">
+		select * from basbanner_mu where is_show = 'Y' and start_ymd <![CDATA[<=]]> TO_CHAR(SYSDATE, 'YYYYMMDD') and end_ymd <![CDATA[>=]]> TO_CHAR(SYSDATE, 'YYYYMMDD') order by sort
+	</select>
+	<select id="getPopup" parameterType="hashmap" resultType="hashmap">
+		select * from bapopup_mu where is_show = 'Y' 
+		and 
+		(
+			
+			(open_type = 'someday' 
+			and start_ymd <![CDATA[<=]]> TO_CHAR(SYSDATE, 'YYYYMMDD') and end_ymd <![CDATA[>=]]> TO_CHAR(SYSDATE, 'YYYYMMDD'))
+			or
+			open_type = 'always'
+		)
+		order by sort
+	</select>
+	<select id="getReco" parameterType="hashmap" resultType="hashmap">
+		select 
+		bapelttb.start_ymd as pelt_start_ymd,
+		bapelttb.end_ymd as pelt_end_ymd,
+		bapelttb.subject_nm as subject_nm,
+		decode(bapelttb.subject_fg, '1', '정규', '2', '단기', '3', '특강') as subject_fg,
+		(select short_name from bacodetb where code_fg = '09' and sub_code = bapelttb.main_cd) as main_nm,
+		bapelttb.web_lecturer_nm,
+		(select short_name from bacodetb where CODE_FG = '02' and sub_code = bapelttb.store) as store_nm,
+		bapelttb.lect_cnt, 
+		bapelttb.regis_fee,
+		bapelttb.food_amt,
+		bapelttb.lect_hour,
+		barecotb_mu.*
+		from 
+		barecotb_mu, bapelttb
+		where 
+		barecotb_mu.is_show = 'Y' 
+		and barecotb_mu.start_ymd <![CDATA[<=]]> TO_CHAR(SYSDATE, 'YYYYMMDD') 
+		and barecotb_mu.end_ymd <![CDATA[>=]]> TO_CHAR(SYSDATE, 'YYYYMMDD') 
+		and barecotb_mu.store = bapelttb.store
+		and barecotb_mu.period = bapelttb.period
+		and barecotb_mu.subject_cd = bapelttb.subject_cd
+		
+		order by barecotb_mu.sort
+	</select>
+</mapper>

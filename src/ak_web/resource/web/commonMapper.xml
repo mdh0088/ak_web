@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="/web/commonMapper">
+
+
+<select id="retrievePeriod" resultType="hashmap">
+		select period from (select period from baperitb where web_open_ymd <![CDATA[<=]]> TO_CHAR(SYSDATE,'YYYYMMDD') and store = '${store}' order by web_open_ymd desc ) where rownum = 1
+</select>
+<select id="getBranch" parameterType="hashmap" resultType="hashmap">
+	select * from BACODETB where CODE_FG = '02' order by decode(sub_code,'03',sub_code),sub_code 
+</select>
+
+<select id="retrieveLectReceiptDay" resultType="hashmap">
+		select 
+			cs_open_ymd
+			,start_ymd
+			,adult_s_bgn_ymd
+			,child_s_bgn_ymd
+			,adult_f_bgn_ymd
+			,child_f_bgn_ymd
+			,end_ymd
+			,time
+			,create_resi_no
+			,create_date
+			,web_open_ymd
+		FROM baperitb where 1=1
+			and hq=00
+			and store = '${store}'
+			and period = '${period}'
+</select>
+
+<select id="getPereCnt" parameterType="hashmap" resultType="int">
+	select count(*) as cnt from BAPERETB where cust_no = '${cust_no}' 
+</select>
+<select id="getEncdList" parameterType="hashmap" resultType="hashmap">
+select
+    aa.*
+from baencdmtb_mu aa where
+    aa.store='${store}'
+    and aa.period='${period}'
+    and aa.limited_cnt <![CDATA[>]]> (select count(*) from baencdtb_mu where store =aa.store and period =aa.period and enuri_cd = aa.enuri_cd and cust_no='${cust_no}' and use_yn='Y')
+    AND ( aa.give_fg='T'
+            or (aa.give_fg='G' 
+            
+                and (aa.cust_fg = ( SELECT nvl2(MIN(PERIOD),'2','1')  AS COUNT             
+                                      FROM BAPERETB         
+                                     WHERE
+                                        STORE        = aa.store
+                                       AND CUST_NO    = '${cust_no}'
+                                       AND PERIOD   <![CDATA[<]]>  (select get_web_period(aa.store) period from dual)) or aa.cust_fg is null)
+                                       
+                     and (aa.grade like '%'||(select nvl(max(b.mbr_gdc),'119') from ams_bz_sect_mbr_grade b 
+                                        where b.cus_no = (select cus_no from bacusttb where cust_no = '${cust_no}'))||'%' or aa.grade is null)     
+                                        
+                     and (	(  select count(*) from baperetb where 
+                                regis_cancel_fg <![CDATA[<>]]> '3'
+                                and RECPT_NO <![CDATA[<>]]> '*' 
+                                and store= aa.store
+                                and cust_no ='${cust_no}'
+                                and period = aa.period
+                                )  <![CDATA[>=]]> aa.lect_cnt
+                            or aa.lect_cnt is null)  
+                     and (BA_CUST_CONTINUE_CNT('${cust_no}',aa.store,aa.period,aa.semester_cnt) <![CDATA[>=]]> aa.semester_cnt or aa.semester_cnt is null)))
+    and substr(TO_CHAR(SYSDATE,'yyyymmddhh24miss'), 0, 8 ) <![CDATA[>=]]> replace(aa.discount_period_start,'-','')
+    and substr(TO_CHAR(SYSDATE,'yyyymmddhh24miss'), 0, 8 ) <![CDATA[<=]]> replace(aa.discount_period_end,'-','')
+    
+    <if test="!subject_cd.equals('')">
+    	and (decode(instr(aa.subject_fg,(select subject_fg from bapelttb where hq=00 and store=aa.store and period = aa.period and subject_cd = '${subject_cd}'),1,1),0, 1, 0) = 0 or aa.subject_fg is null)
+    	and (aa.main_cd = (select main_cd from bapelttb where hq=00 and store=aa.store and period = aa.period and subject_cd = '${subject_cd}') or aa.main_cd is null)
+    	and (aa.sect_cd = (select sect_cd from bapelttb where hq=00 and store=aa.store and period = aa.period and subject_cd = '${subject_cd}') or aa.sect_cd is null)
+    	and (aa.subject_cd = '${subject_cd}' or aa.subject_cd is null)
+    </if>
+    
+    order by enuri_cd
+</select>
+<update id="change_main_store" parameterType="hashmap">
+		update bacusttb
+		set store = '${store}'
+		where
+		cust_no = '${cust_no}'
+</update>
+<update id="change_main_store2" parameterType="hashmap">
+		update bafastrtb
+		set 
+		store = '${store}', 
+		update_resi_no = '${cust_no}', 
+		update_date = to_char(sysdate, 'yyyymmddhh24miss')
+		where ci = '${ci}'
+</update>
+<select id="getStoreNm" parameterType="hashmap" resultType="string">
+	select short_name from bacodetb where CODE_FG = '02' and sub_code = '${store}'
+</select>
+<select id="getisEncdYN" parameterType="hashmap" resultType="string">
+	select nvl(corp_fg, 'N') as corp_fg from bapelttb where store = '${store}' and period = '${period}' and subject_cd = '${subject_cd}'
+</select>
+</mapper>

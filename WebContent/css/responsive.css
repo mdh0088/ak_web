@@ -1,0 +1,22 @@
+html, body, .header{
+	min-width:1366px;
+}
+@media only screen and (max-width:1800px) {
+
+}
+@media only screen and (max-width:1366px) {
+  /* Add your Mobile Styles here */
+	body{
+		overflow-x:scroll;
+	}
+}
+
+
+
+
+
+@media only screen and (max-height:900px) {
+	.myaca-wrap{
+		overflow-y:scroll;
+	}
+}

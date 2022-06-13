@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="euc-kr"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd"> 
+<properties> 
+    <comment>20160203 최초작성</comment>
+    <!-- 엠퍼센트 기호는 &amp; 로 변환(주석포함) -->
+    
+    <!-- URL방식 -->
+    <entry key="URL_TYPE_0">/cult/mypagejoin.do?method=list</entry>                         <!-- 가족회원등록 -->
+    <entry key="URL_TYPE_1">/cult/lecture.do?method=templist</entry>                         <!-- 나의책가방 -->
+    <entry key="URL_TYPE_2">/cult/lecturelist.do?method=list</entry>                            <!-- 인터넷수강,취소내역 -->
+    <entry key="URL_TYPE_3">/cult/mypagejoin.do?method=discountList</entry>              <!-- 할인권내역 -->
+    <entry key="URL_TYPE_4">/cult/lecture.do?method=waitLectureList</entry>                 <!-- 대기강좌내역 -->
+    <entry key="URL_TYPE_5">/cult/custopinion.do?method=form</entry>                       <!-- 고객의소리 -->
+    <entry key="URL_TYPE_6">/cult/recruit.do?method=result</entry>                            <!-- 지원서 수정/결과 -->
+    <entry key="URL_TYPE_7">/cult/custgallery.do?method=writeform</entry>                   <!-- 회원갤러리 등록폼 -->
+    <entry key="URL_TYPE_8">/cult/recruit.do?method=initiate</entry>                           <!-- 지원서 수정/결과 -->
+    <entry key="URL_TYPE_9">/course/detail</entry>                        <!-- 회원갤러리 댓글 -->
+    <entry key="URL_TYPE_10">/course/list01</entry>                        <!-- 회원갤러리 댓글 -->
+    
+    
+    <!-- entry key="URL_TYPE_9">/cult/lecture.do?method=subschedule</entry -->                    <!-- 강좌검색 -->
+    
+    
+    <!-- 스크립트 A방식 -->
+    <entry key="SA_TYPE_0">/cult/mypagejoin.do?method=list</entry>                           <!-- 가족회원등록 -->
+    <entry key="SA_TYPE_1">/cult/lecture.do?method=templist</entry>                           <!-- 나의책가방 -->
+    <entry key="SA_TYPE_2">/cult/lecturelist.do?method=list</entry>                              <!-- 인터넷수강,취소내역 -->
+    <entry key="SA_TYPE_3">/cult/mypagejoin.do?method=discountList</entry>                <!-- 할인권내역 -->
+    <entry key="SA_TYPE_4">/cult/lecture.do?method=waitLectureList</entry>                   <!-- 대기강좌내역 -->
+    <entry key="SA_TYPE_5">/cult/custopinion.do?method=form</entry>                         <!-- 고객의소리 -->
+    <entry key="SA_TYPE_6">/cult/recruit.do?method=result</entry>                              <!-- 지원서 수정/결과 -->
+        
+
+    <!-- 스크립트 B방식 -->    
+    <entry key="SB_TYPE_0">/cult/lecture.do?method=view</entry>                                <!-- 강좌정보 -->
+    <entry key="SB_TYPE_1">/cult/lecture.do?method=subschedule</entry>                      <!-- 강좌검색 -->
+    <entry key="SB_TYPE_2">/cult/custgallery.do?method=list</entry>                             <!-- 회원갤러리 -->
+    <entry key="SB_TYPE_3">/home/commonjsp.do?pageskin=common.recruitinfo</entry>    <!-- 강사지원리스트 -->
+    <entry key="SB_TYPE_4">/cult/custgallery.do?method=content</entry>                        <!-- 회원갤러리 댓글 -->
+    <entry key="SB_TYPE_5">/course/detail</entry>                        <!-- 회원갤러리 댓글 -->
+    <entry key="SB_TYPE_6">/course/list01</entry>                        <!-- 회원갤러리 댓글 -->
+        
+</properties> 
+ 

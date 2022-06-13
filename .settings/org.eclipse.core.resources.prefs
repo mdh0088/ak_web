@@ -1,0 +1,10 @@
+eclipse.preferences.version=1
+encoding//WebContent/WEB-INF/pages/web/academy/news.jsp=UTF-8
+encoding//WebContent/WEB-INF/pages/web/common/header.jsp=UTF-8
+encoding//WebContent/WEB-INF/pages/web/course/site_conf_inc.jsp=UTF-8
+encoding//WebContent/WEB-INF/pages/web/course/test.jsp=UTF-8
+encoding//WebContent/inc/academy/lnb01.jsp=UTF-8
+encoding//WebContent/inc/academy/lnb05.jsp=UTF-8
+encoding//WebContent/inc/footer_inc.jsp=UTF-8
+encoding//src/ak_web/frame/message/XmlPropertyManager.java=euc-kr
+encoding//src/ak_web/service/AttendCustService.java=euc-kr

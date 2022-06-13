@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd"> 
+<properties> 
+<comment>20081024 최초작성</comment> 
+
+<entry key="DB_CONNECTOR_AMS">akm_tmcs</entry> 
+<entry key="DB_CONNECTOR_CM">akm_common</entry> 
+<entry key="SYSTEM_DIV">AMS</entry> 
+<entry key="DB_CONNECTOR_HOME">akc_manager</entry> <!-- 문화센터 akc_manager -->
+<entry key="SUPERADMIN_ID">akadmin</entry>
+<entry key="SUPERADMIN_PW">1234</entry>
+
+
+<entry key="local.root.path">/app/ak_app/culture/WebContent/fileupload/board/uploadfile/</entry>
+<!--<entry key="local.root.path">/was/ak_app_song/culture/WebContent/fileupload/board/uploadfile/</entry>-->
+<entry key="web.Server1">ptl.web1</entry>
+<entry key="web.Server2">ptl.web2</entry>
+<entry key="web.Server3">ams.web1</entry>
+<entry key="web.Server4">ams.web2</entry>
+<entry key="ams.web1.ip">91.1.111.55</entry>
+<entry key="ams.web1.id">webtob</entry>
+<entry key="ams.web1.pw">dorudweb#1</entry>
+<entry key="ams.web1.root.path">/web/webtob/docs/culture_mgr/WebContent/fileupload/board/uploadfile/</entry>
+<entry key="ams.web2.ip">91.1.111.56</entry>
+<entry key="ams.web2.id">webtob</entry>
+<entry key="ams.web2.pw">dorudweb#2</entry>
+<entry key="ams.web2.root.path">/web/webtob/docs/culture_mgr/WebContent/fileupload/board/uploadfile/</entry>
+<entry key="ptl.web1.ip">91.1.111.53</entry>
+<entry key="ptl.web1.id">webtob</entry>
+<entry key="ptl.web1.pw">vhxkfweb#1</entry>
+<entry key="ptl.web1.root.path">/web/webtob/docs/culture/WebContent/fileupload/board/uploadfile/</entry>
+<entry key="ptl.web2.ip">91.1.111.54</entry>
+<entry key="ptl.web2.id">webtob</entry>
+<entry key="ptl.web2.pw">vhxkfweb#2</entry>
+<entry key="ptl.web2.root.path">/web/webtob/docs/culture/WebContent/fileupload/board/uploadfile/</entry>
+
+<entry key="RECRUIT_FILE_PATH">C:/Users/AK/Documents/workspace/ak_web/WebContent/uploadfile/recruit/</entry>
+
+<!--  개발 : 주석풀고 사용 -->
+<entry key="ANYLINK_AU1">http://91.1.111.92:30002/soaptest/receiver</entry>
+<entry key="ANYLINK_AU2">http://91.1.111.92:30002/soaptest/receiver</entry>
+
+<!-- AU 승인-->
+<!-- <entry key="ANYLINK_AU1">http://91.1.111.61:30002/soaptest/receiver</entry> -->
+<!-- <entry key="ANYLINK_AU2">http://91.1.111.62:30002/soaptest/receiver</entry> -->
+
+<!-- MS 회원 안씀 -->
+<entry key="ANYLINK_MS1">http://91.1.111.61:30003/soaptest/receiver</entry>
+<entry key="ANYLINK_MS2">http://91.1.111.62:30003/soaptest/receiver</entry>
+<entry key="FRAN_CD">80102</entry>
+<entry key="INST_CD">1014</entry>
+
+
+<entry key="weblog.host.div">was1</entry>
+<entry key="weblog.system.div">CULTURE</entry>
+<entry key="weblog.dir.home">/app/ak_app/culture/weblog/</entry>
+<!--<entry key="weblog.dir.home">/was/ak_app_song/culture/weblog/</entry> -->
+
+
+<entry key="sso_ip1">91.1.111.51</entry>
+<entry key="sso_ip2">91.1.111.52</entry>
+<!-- CFDB->AKRIS 카드승인데몬 기존소스 백업(11.03.31)   
+<entry key="op_host">91.1.101.17</entry>
+<entry key="op_port">9012</entry>
+<entry key="dev_host">91.1.101.21</entry>
+<entry key="dev_port">9001</entry> 
+-->
+<entry key="op_host">91.1.101.67</entry>
+<entry key="op_port">9012</entry>
+<entry key="dev_host">91.1.101.21</entry>
+<entry key="dev_port">9012</entry> 
+
+<entry key="dev_was">192.168.137.1</entry>
+<entry key="front_was1">91.1.111.57</entry>
+<entry key="front_was2">91.1.111.58</entry>   
+
+<!-- <entry key="op_mem_host">91.3.105.11</entry> 
+<entry key="op_mem_port">9002</entry>  -->
+
+<entry key="op_mem_host">174.10.1.71</entry>
+<entry key="op_mem_port">9302</entry>
+
+<!--<entry key="op_mem_host">91.1.111.92</entry>
+<entry key="op_mem_port">9302</entry>-->
+<!--<entry key="dev_mem_host">91.1.111.92</entry>-->
+<!--<entry key="dev_mem_host">91.3.111.24</entry>2012.05.14까지 -->
+<entry key="dev_mem_host">91.3.105.15</entry>
+<entry key="dev_mem_port">9302</entry> 
+
+
+<entry key="g_conf_home_dir">/aksw/app/front_app/kcp</entry>
+<!--<entry key="g_conf_gw_url">203.238.36.136</entry>-->
+<entry key="g_conf_gw_url">103.215.145.30</entry>
+<entry key="g_conf_gw_port">8090</entry>
+<entry key="g_conf_tx_mode">0</entry>
+<entry key="g_conf_site_key_01">3UFtDddApjhZsgiUBLlrNml__</entry>
+<entry key="g_conf_site_key_01_AK">4lilhhg2MCihRLa8Hjxbn6O__</entry>
+<entry key="g_conf_site_key_02">2o4jvNPIQpRetsBzigP50V4__</entry>
+<entry key="g_conf_site_key_02_AK">3jN-Rwp2pjKDqfIHzQOJYl7__</entry>
+<entry key="g_conf_site_key_03">10n5054r5SJ12OxRaxHABGN__</entry>
+<entry key="g_conf_site_key_03_AK">4S0u5vw08FMG3WVK..tgH1X__</entry>
+<!-- <entry key="g_conf_site_key_04">2THmwmFhyOPgqqp32QtoVyT__</entry> -->
+<entry key="g_conf_site_key_04">3SXs8hAwjfR0UYqe0Jh9P5l__</entry>
+<!-- <entry key="g_conf_site_key_04_AK">3TZHEhzZEtG8ZVCWa4M9fR6__</entry> -->
+<entry key="g_conf_site_key_04_AK">2PRQbkcaWuFvPUurHEIcwO4__</entry>
+
+
+
+<entry key="g_conf_site_key_05">3BCKqT4rbt-bj9By28nFlM6__</entry>
+<entry key="g_conf_site_key_05_AK">02q-T6ZMMW6t-vwxgkMb59S__</entry>
+
+<entry key="g_conf_site_key_01_AKKB">4pLKAQqPitDLjADqNGugBvO__</entry>
+<entry key="g_conf_site_key_02_AKKB">1NEF-aXhGekL3H4GXVc9XEf__</entry>
+<entry key="g_conf_site_key_03_AKKB">0v2AwLQcbTY7tMmlFN5CkIS__</entry>
+<!-- <entry key="g_conf_site_key_04_AKKB">3aAIv.4.cWEwbbSrTJrjF06__</entry> -->
+<entry key="g_conf_site_key_04_AKKB">1l-FFr-aZgoH-s4jNDj66IN__</entry>
+<entry key="g_conf_site_key_05_AKKB">1ugODjFZwxvd7vXfIzI-DmL__</entry>
+
+<entry key="g_conf_log_level">3</entry>
+<entry key="g_conf_js_url">https://pay.kcp.co.kr/plugin/payplus.js</entry>
+
+
+<entry key="g_conf_site_cd_01">D2937</entry>
+<entry key="g_conf_site_cd_01_AK">D2941</entry>
+<entry key="g_conf_site_cd_02">D2935</entry>
+<entry key="g_conf_site_cd_02_AK">D2936</entry>
+<entry key="g_conf_site_cd_03">D2938</entry>
+<entry key="g_conf_site_cd_03_AK">D2939</entry>
+
+<!--
+<entry key="g_conf_site_cd_04">D2943</entry>
+<entry key="g_conf_site_cd_04_AK">D2944</entry>
+-->
+
+<entry key="g_conf_site_cd_04">A91C2</entry>
+<entry key="g_conf_site_cd_04_AK">A91CL</entry>
+
+<entry key="g_conf_site_cd_05">D8473</entry>
+<entry key="g_conf_site_cd_05_AK">D8474</entry> 
+<entry key="g_conf_site_name">AK PLAZA</entry>
+
+<entry key="g_conf_site_cd_01_AKKB">A7NBS</entry>
+<entry key="g_conf_site_cd_02_AKKB">A7NBR</entry>
+<entry key="g_conf_site_cd_03_AKKB">A7NBO</entry>
+<!--<entry key="g_conf_site_cd_04_AKKB">A7NBQ</entry> -->
+<entry key="g_conf_site_cd_04_AKKB">A91CN</entry>
+<entry key="g_conf_site_cd_05_AKKB">A7NBP</entry>
+
+<!-- 우리카드용  -->
+<!-- 구로는 뺀다. <entry key="g_conf_site_cd_01_AKWB">A7NBS</entry> -->
+<entry key="g_conf_site_cd_02_AKWB">A8XQT</entry> <!-- 수원 -->
+<entry key="g_conf_site_cd_03_AKWB">A8XQM</entry> <!-- 분당 -->  
+<!--<entry key="g_conf_site_cd_04_AKWB">A8XQP</entry> --> <!-- 평택 -->  
+<entry key="g_conf_site_cd_04_AKWB">A91CM</entry> <!-- 평택 -->  
+<entry key="g_conf_site_cd_05_AKWB">A8XQS</entry> <!-- 원주 -->  
+
+
+<!-- 구로 뺀다 <entry key="g_conf_site_key_01_AKWB">4pLKAQqPitDLjADqNGugBvO__</entry> -->
+<entry key="g_conf_site_key_02_AKWB">396h6qtw048nEJTgx6iP507__</entry> <!-- 수원 -->
+<entry key="g_conf_site_key_03_AKWB">24bqTD92LB67JAG5XHGw3f4__</entry> <!-- 분당 -->
+<!-- <entry key="g_conf_site_key_04_AKWB">4kDhAiZolR9TDL0.oYngYeO__</entry>--> <!-- 평택 -->
+<entry key="g_conf_site_key_04_AKWB">3Gj0NjJxyC3WWEsMOOCoKy6__</entry>
+<entry key="g_conf_site_key_05_AKWB">2Ua0JNXSB7xRhdFk3K6wXaf__</entry> <!-- 원주 -->
+<!-- 우리카드용  -->
+
+<entry key="g_conf_home_dir_test">C:\Users\AK\Documents\workspace\ak_web\WebContent\kcp</entry>
+<entry key="g_conf_gw_url_test">210.122.73.58</entry>
+<entry key="g_conf_gw_port_test">8090</entry>
+<entry key="g_conf_tx_mode_test">0</entry>
+<entry key="g_conf_site_key_test">3grptw1.zW0GSo4PQdaGvsF__</entry>
+<entry key="g_conf_log_level_test">3</entry>
+<entry key="g_conf_site_cd_test">T0000</entry>
+<!-- <entry key="g_conf_js_url_test">https://pay.kcp.co.kr/plugin/payplus_test.js</entry> -->
+<entry key="g_conf_js_url_test">https://testpay.kcp.co.kr/plugin/payplus_web.jsp</entry>
+<entry key="g_conf_log_dir_test">C:\Users\AK\Documents\KCP\log</entry>
+
+
+</properties> 
+ 
